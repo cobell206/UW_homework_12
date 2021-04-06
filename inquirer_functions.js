@@ -67,7 +67,7 @@ async function view_departments(connection) {
 
 // View Roles
 async function view_roles(connection) {
-    query = "SELECT role.id, role.name, department.department_title FROM role INNER JOIN department ON role.department_id=department.id;"
+    query = "SELECT roles.id, roles.role_name, department.department_title FROM roles INNER JOIN department ON roles.department_id=department.id;"
     const test = await connection.query(query, (err, res) => {
         if (err) console.log(err);
         console.table(res)
@@ -76,8 +76,8 @@ async function view_roles(connection) {
 
 // View employees
 async function view_employees(connection) {
-    query = "SELECT employee.id, employee.first_name, employee.last_name, role.name FROM employee "
-    query += " INNER JOIN role WHERE employee.role_id=role.id"
+    query = "SELECT employee.id, employee.first_name, employee.last_name, roles.role_name FROM employee "
+    query += " INNER JOIN roles WHERE employee.role_id=roles.id"
     const test = await connection.query(query, (err, res) => {
         if (err) console.log(err);
         console.table(res)
@@ -88,7 +88,7 @@ async function update_role(connection) {
 
     // Query all employees and save to roles list
     const employee_list = []
-    query = "SELECT * FROM employee"
+    query = "SELECT * FROM employee;"
     await connection.query(query, async function (err, res) {
         if (err) console.log(err);
         
@@ -99,13 +99,12 @@ async function update_role(connection) {
     })
 
     const roles = []
-    query = "SELECT * FROM role"
+    query = "SELECT * FROM roles;"
     await connection.query(query, async function (err, res) {
         if (err) console.log(err);
         
         await res.forEach(({name},i) => {
-            // line = res[i].name
-            roles.push(name)
+            roles.push(res[i].role_name)
         })
     })
 
@@ -127,6 +126,12 @@ async function update_role(connection) {
             }
         ])
         .then(answer => {
+            employee_ = employee_list.indexOf(answer.chose_employee) + 1
+            role_ = roles.indexOf(answer.chose_role) + 1
+            query = `UPDATE employee SET role_id=${role_} WHERE id=${employee_}`
+            connection.query(query, async function (err, res) {
+                if (err) console.log(err)
+            })
 
         })
         

@@ -18,9 +18,9 @@ CREATE TABLE department(
     PRIMARY KEY (id)
 );
 
-CREATE TABLE role(
+CREATE TABLE roles(
     id INT NOT NULL AUTO_INCREMENT,
-    name VARCHAR(30) NOT NULL,
+    role_name VARCHAR(30) NOT NULL,
     department_id INT NOT NULL,
     PRIMARY KEY (id)
 );

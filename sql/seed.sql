@@ -9,25 +9,25 @@ VALUES ("Engineering");
 INSERT INTO department (department_title)
 VALUES ("Sales");
 
-INSERT INTO role (name, department_id)
+INSERT INTO roles (role_name, department_id)
 VALUES ("Marketting Manager", 1);
 
-INSERT INTO role (name, department_id)
+INSERT INTO roles (role_name, department_id)
 VALUES ("Engineering Manager", 2);
 
-INSERT INTO role (name, department_id)
+INSERT INTO roles (role_name, department_id)
 VALUES ("Sales Manager", 3);
 
-INSERT INTO role (name, department_id)
+INSERT INTO roles (role_name, department_id)
 VALUES ("Engineer", 2);
 
-INSERT INTO role (name, department_id)
+INSERT INTO roles (role_name, department_id)
 VALUES ("Marketer", 1);
 
-INSERT INTO role (name, department_id)
+INSERT INTO roles (role_name, department_id)
 VALUES ("Seller", 3);
 
-INSERT INTO role (name, department_id)
+INSERT INTO roles (role_name, department_id)
 VALUES ("Intern", 2);
 
 

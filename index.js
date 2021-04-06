@@ -103,15 +103,16 @@ async function test_loop() {
 
 async function test_console() {
 
-    query = "SELECT employee.id, employee.first_name, employee.last_name, role.name FROM employee "
-    query += " INNER JOIN role WHERE employee.role_id=role.id"
-    const test = await connection.query(query, (err, res) => {
+    const roles = []
+    query = "SELECT * FROM roles"
+    await connection.query(query, async function (err, res) {
         if (err) console.log(err);
-        console.table(res)
-        return res
+        console.log(res);
+        // await res.forEach(({name},i) => {
+        //     // line = res[i].name
+        //     roles.push(res[i])
+        // })
     })
-
-    console.log(test);
     connection.end()
 
 }
@@ -119,5 +120,6 @@ async function test_console() {
 // test_console()
 
 update_role(connection)
+// test_console()
 
-connection.end()
+// connection.end()
