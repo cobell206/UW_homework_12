@@ -1,7 +1,7 @@
 const mysql = require('mysql')
 const inquirer = require('inquirer');
 const cTable = require('console.table')
-const { add_department, add_role, view_departments, view_roles, view_employees, update_role } = require('./inquirer_functions')
+const { add_department, add_role, add_employees, view_departments, view_roles, view_employees, update_role, update_manager } = require('./inquirer_functions')
 
 // Create connection to mysql database
 const connection = mysql.createConnection({
@@ -24,7 +24,7 @@ async function choose_action() {
                 message: 'What would you like to do?',
                 choices: ['Add department', 'Add employee', 'Add role',
                     'View departments', 'View employees', 'View roles',
-                    'Update roles',
+                    'Update roles', 'Update manager',
                     'EXIT']
             }
         ])
@@ -45,28 +45,32 @@ async function choose_action() {
         await add_department(connection)
         return false
     }
-    else if (action = 'Add role') {
+    else if (action == 'Add role') {
         await add_role(connection)
         return false
     }
-    else if (action = 'Add employee') {
-        await add_employee(connection)
+    else if (action == 'Add employee') {
+        await add_employees(connection)
         return false
     }
-    else if (action = 'View deparments') {
+    else if (action == 'View deparments') {
         await view_departments(connection)
         return false
     }
-    else if (action = 'View roles') {
+    else if (action == 'View roles') {
         await view_roles(connection)
         return false
     }
-    else if (action = 'View employees') {
+    else if (action == 'View employees') {
         await view_employees(connection)
         return false
     }
-    else if (action = 'Update roles') {
-        await update_roles(connection)
+    else if (action == 'Update roles') {
+        await update_role(connection)
+        return false
+    }
+    else if (action == 'Update manager') {
+        await update_manager(connection)
         return false
     }
 
@@ -99,27 +103,5 @@ async function test_loop() {
     }
 }
 
-// test_loop()
-
-async function test_console() {
-
-    const roles = []
-    query = "SELECT * FROM roles"
-    await connection.query(query, async function (err, res) {
-        if (err) console.log(err);
-        console.log(res);
-        // await res.forEach(({name},i) => {
-        //     // line = res[i].name
-        //     roles.push(res[i])
-        // })
-    })
-    connection.end()
-
-}
-
-// test_console()
-
-update_role(connection)
-// test_console()
-
-// connection.end()
+test_loop()
+// view_departments(connection)

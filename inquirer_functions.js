@@ -1,4 +1,5 @@
 const inquirer = require("inquirer");
+const cTable = require('console.table')
 
 // Inquirer to add department
 async function add_department(connection) {
@@ -46,7 +47,64 @@ async function add_role(connection) {
         ])
         .then(answer => {
             department_id = roles.indexOf(answer.department) + 1
-            query = `INSERT INTO role (name, department_id) VALUES ("${answer.role_name}", "${department_id}");`
+            query = `INSERT INTO roles (name, department_id) VALUES ("${answer.role_name}", "${department_id}");`
+            connection.query(query, (err, res) => {
+                if (err) throw err
+            })
+        })
+        .catch(error => {
+            console.log(error);
+        })
+}
+
+// Inquirer to add employee
+async function add_employees(connection) {
+
+    const roles = []
+    const managers = []
+    connection.query("SELECT * FROM roles", (err, res) => {
+        if (err) throw err
+        res.forEach(({role_name}, i) => {
+            roles.push(role_name)
+        });
+    })
+    connection.query("SELECT * FROM employee", (err, res) => {
+        if (err) throw err
+        res.forEach(({first_name, last_name}, i) => {
+            line = res[i].first_name + ' ' + res[i].last_name
+            managers.push(line)
+        });
+    })
+
+    await inquirer
+        .prompt([
+            {
+                name: 'first_name',
+                type: 'input',
+                message: 'What is their first name?'
+            },
+            {
+                name: 'last_name',
+                type: 'input',
+                message: 'What is their last name?',
+            },
+            {
+                name: 'role',
+                type: 'list',
+                message: 'Which role are they in?',
+                choices: roles
+            },
+            {
+                name: 'manager',
+                type: 'list',
+                message: 'Who is their manager?',
+                choices: managers
+            }
+        ])
+        .then(answer => {
+            role_id = roles.indexOf(answer.role) + 1
+            manager_id = managers.indexOf(answer.manager) + 1
+            query = `INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ("${answer.first_name}","${answer.last_name}","${role_id}", "${manager_id}");`
             connection.query(query, (err, res) => {
                 if (err) throw err
             })
@@ -58,8 +116,8 @@ async function add_role(connection) {
 
 // View Deparments
 async function view_departments(connection) {
-    query = "SELECT * FROM departments"
-    await connection.query(query, (err, res) => {
+    query = "SELECT * FROM department;"
+    const test = await connection.query(query, (err, res) => {
         if (err) console.log(err);
         console.table(res)
     })
@@ -84,6 +142,8 @@ async function view_employees(connection) {
     })
 }
 
+
+// Update a role
 async function update_role(connection) {
 
     // Query all employees and save to roles list
@@ -108,20 +168,20 @@ async function update_role(connection) {
         })
     })
 
-    // Execute inquirer about 
+    // Execute inquirer about updating role
     setTimeout(() => {
         inquirer
         .prompt([
             {
                 name: 'chose_employee',
                 type: 'list',
-                message: 'Choose employee to update',
+                message: 'Choose employee to update their role',
                 choices: employee_list
             },
             {
                 name: 'chose_role',
                 type: 'list',
-                message: 'Choose role to change to',
+                message: 'Choose their new role',
                 choices: roles
             }
         ])
@@ -140,5 +200,53 @@ async function update_role(connection) {
     
 }
 
+// Update a manager
+async function update_manager(connection) {
 
-module.exports = { add_department, add_role, view_departments, view_roles, view_employees, update_role }
+    // Query all employees and save to roles list
+    const employee_list = []
+    query = "SELECT * FROM employee;"
+    await connection.query(query, async function (err, res) {
+        if (err) console.log(err);
+        
+        await res.forEach(({first_name, last_name},i) => {
+            line = res[i].first_name + ' ' + res[i].last_name
+            employee_list.push(line)
+        })
+    })
+
+    // Execute inquirer about updating role
+    setTimeout(() => {
+        inquirer
+        .prompt([
+            {
+                name: 'chose_employee',
+                type: 'list',
+                message: 'Choose employee to update their manager',
+                choices: employee_list
+            },
+            {
+                name: 'chose_manager',
+                type: 'list',
+                message: 'Choose their new manager',
+                choices: employee_list
+            }
+        ])
+        .then(answer => {
+            employee_ = employee_list.indexOf(answer.chose_employee) + 1
+            manager_ = employee_list.indexOf(answer.chose_manager) + 1
+            query = `UPDATE employee SET manager_id=${manager_} WHERE id=${employee_}`
+            connection.query(query, async function (err, res) {
+                if (err) console.log(err)
+            })
+
+        })
+        
+    }, 250);
+
+    
+}
+
+
+
+module.exports = { add_department, add_role, add_employees, view_departments, view_roles, view_employees, update_role, update_manager }
